@@ -7,41 +7,33 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-// COMPLETED (15) Add a class called ForecastAdapter
-// COMPLETED (22) Extend RecyclerView.Adapter<ForecastAdapter.ForecastAdapterViewHolder>
 /**
  * {@link ForecastAdapter} exposes a list of weather forecasts to a
  * {@link android.support.v7.widget.RecyclerView}
  */
 public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ForecastAdapterViewHolder> {
 
-    // COMPLETED (23) Create a private string array called mWeatherData
+
     private String[] mWeatherData;
 
-    // COMPLETED (47) Create the default constructor (we will pass in parameters in a later lesson)
     public ForecastAdapter() {
 
     }
 
-    // COMPLETED (16) Create a class within ForecastAdapter called ForecastAdapterViewHolder
-    // COMPLETED (17) Extend RecyclerView.ViewHolder
+
     /**
      * Cache of the children views for a forecast list item.
      */
     public class ForecastAdapterViewHolder extends RecyclerView.ViewHolder {
 
-        // Within ForecastAdapterViewHolder ///////////////////////////////////////////////////////
-        // COMPLETED (18) Create a public final TextView variable called mWeatherTextView
         public final TextView mWeatherTextView;
 
-        // COMPLETED (19) Create a constructor for this class that accepts a View as a parameter
-        // COMPLETED (20) Call super(view)
-        // COMPLETED (21) Using view.findViewById, get a reference to this layout's TextView and save it to mWeatherTextView
+
         public ForecastAdapterViewHolder(View view) {
             super(view);
             mWeatherTextView = (TextView) view.findViewById(R.id.tv_weather_data);
         }
-        // Within ForecastAdapterViewHolder ///////////////////////////////////////////////////////
+
     }
 
     @Override
@@ -55,8 +47,7 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
         return new ForecastAdapterViewHolder(view);
     }
 
-    // COMPLETED (27) Override onBindViewHolder
-    // COMPLETED (28) Set the text of the TextView to the weather for this list item's position
+
     /**
      * OnBindViewHolder is called by the RecyclerView to display the data at the specified
      * position. In this method, we update the contents of the ViewHolder to display the weather
@@ -73,8 +64,6 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
         forecastAdapterViewHolder.mWeatherTextView.setText(weatherForThisDay);
     }
 
-    // COMPLETED (29) Override getItemCount
-    // COMPLETED (30) Return 0 if mWeatherData is null, or the size of mWeatherData if it is not null
     /**
      * This method simply returns the number of items to display. It is used behind the scenes
      * to help layout our Views and for animations.
@@ -87,8 +76,6 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
         return mWeatherData.length;
     }
 
-    // COMPLETED (31) Create a setWeatherData method that saves the weatherData to mWeatherData
-    // COMPLETED (32) After you save mWeatherData, call notifyDataSetChanged
     /**
      * This method is used to set the weather forecast on a ForecastAdapter if we've already
      * created one. This is handy when we get new data from the web but don't want to create a
