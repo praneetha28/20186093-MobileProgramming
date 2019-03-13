@@ -202,7 +202,7 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapterOn
     }
 
     private void openLocationInMap() {
-        String addressString = "1600 Amphitheatre Parkway, CA";
+        String addressString = "IIIT Hyderabad, Gachibowli";
         Uri geoLocation = Uri.parse("geo:0,0?q=" + addressString);
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
