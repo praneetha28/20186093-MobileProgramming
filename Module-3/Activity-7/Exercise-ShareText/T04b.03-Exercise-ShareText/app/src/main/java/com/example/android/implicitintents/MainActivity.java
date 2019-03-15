@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
      */
     public void onClickShareTextButton(View v) {
         // TODO (5) Specify a String you'd like to share
-        String text = "Hello There :) !!!!!!";
+        String text = "Hello ?";
         // TODO (6) Replace the Toast with shareText, passing in the String from step 5
        shareText(text);
     }
@@ -151,7 +151,8 @@ public class MainActivity extends AppCompatActivity {
         ShareCompat.IntentBuilder.from(this)
                 .setChooserTitle(title)
                 .setType(mimeType)
-                .setText(string);
+                .setText(string)
+                .startChooser();
     }
     // Do steps 2 - 4 within the shareText method
 
