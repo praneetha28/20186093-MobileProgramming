@@ -15,12 +15,11 @@
  */
 package com.example.android.asynctaskloader;
 
-import android.app.LoaderManager;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
-//import android.support.v7.app.LoaderManager;
-import android.content.AsyncTaskLoader;
-import android.content.Loader;
+
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+
+import android.support.v4.content.Loader;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -38,7 +37,7 @@ import java.io.IOException;
 import java.net.URL;
 
 // TODO (1) implement LoaderManager.LoaderCallbacks<String> on MainActivity
-@RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
+
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String> {
 
     /* A constant to save and restore the URL that is being displayed */
@@ -79,13 +78,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             // TODO (26) Remove the code that retrieves the JSON
 
 
-            mUrlDisplayTextView.setText(queryUrl);
-            // TODO (25) Remove the code that displays the JSON
+
 
         }
 
         // TODO (24) Initialize the loader with GITHUB_SEARCH_LOADER as the ID, null for the bundle, and this for the callback
-        getSupportLoaderManager().initLoader(GITHUB_SEARCH_LOADER, null, (android.support.v4.app.LoaderManager.LoaderCallbacks<Object>) this);
+        getSupportLoaderManager().initLoader(GITHUB_SEARCH_LOADER, null, this);
     }
 
     /**
@@ -107,19 +105,19 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 
         // TODO (19) Create a bundle called queryBundle
-        Bundle querybundle = new Bundle();
-        querybundle.putString(SEARCH_QUERY_URL_EXTRA, githubSearchUrl.toString());
+        Bundle queryBundle = new Bundle();
+        queryBundle.putString(SEARCH_QUERY_URL_EXTRA, githubSearchUrl.toString());
         // TODO (20) Use putString with SEARCH_QUERY_URL_EXTRA as the key and the String value of the URL as the value
 
         // TODO (21) Call getSupportLoaderManager and store it in a LoaderManager variable
-       android.support.v4.app.LoaderManager loaderManager = getSupportLoaderManager();
+       LoaderManager loaderManager = getSupportLoaderManager();
         // TODO (22) Get our Loader by calling getLoader and passing the ID we specified
-        android.support.v4.content.Loader<Object> githubSearchLoader = loaderManager.getLoader(GITHUB_SEARCH_LOADER);
+        Loader<String> githubSearchLoader = loaderManager.getLoader(GITHUB_SEARCH_LOADER);
         // TODO (23) If the Loader was null, initialize it. Else, restart it.
         if (githubSearchLoader == null) {
-            loaderManager.initLoader(GITHUB_SEARCH_LOADER, querybundle, (android.support.v4.app.LoaderManager.LoaderCallbacks<Object>) this);
+            loaderManager.initLoader(GITHUB_SEARCH_LOADER, queryBundle, (this));
         } else {
-            loaderManager.restartLoader(GITHUB_SEARCH_LOADER, querybundle, (android.support.v4.app.LoaderManager.LoaderCallbacks<Object>) this);
+            loaderManager.restartLoader(GITHUB_SEARCH_LOADER, queryBundle, ( this));
         }
     }
 
@@ -154,10 +152,24 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     // TODO (3) Override onCreateLoader
     // Within onCreateLoader
 
-    @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
+
     @Override
-    public Loader<String> onCreateLoader(int i, final Bundle args) {
+    public android.support.v4.content.Loader<String> onCreateLoader(int id,final Bundle args) {
         return new AsyncTaskLoader<String>(this) {
+            @Override
+            public String loadInBackground() {
+                String searchQueryResult = args.getString(SEARCH_QUERY_URL_EXTRA);
+                if (SEARCH_QUERY_URL_EXTRA ==null || TextUtils.isEmpty(searchQueryResult)) {
+                    return null;
+                }
+                try {
+                    URL githubUrl = new URL (searchQueryResult);
+                    return NetworkUtils.getResponseFromHttpUrl(githubUrl);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
             @Override
             public void onStartLoading() {
                 super.onStartLoading();
@@ -165,38 +177,18 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     return;
                 }
                 mLoadingIndicator.setVisibility(View.VISIBLE);
-                forceLoad();
-            }
-
-            @Override
-            public String loadInBackground() {
-                String searchQueryUrlString = args.getString(SEARCH_QUERY_URL_EXTRA);
-
-
-                if (searchQueryUrlString == null || TextUtils.isEmpty(searchQueryUrlString)) {
-                    return null;
-                }
-                try {
-                    URL githubUrl = new URL(searchQueryUrlString);
-                    String githubSearchResults = NetworkUtils.getResponseFromHttpUrl(githubUrl);
-                    return githubSearchResults;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return null;
-                }
             }
         };
     }
 
-    @Override
     public void onLoadFinished(Loader<String> loader, String s) {
         mLoadingIndicator.setVisibility(View.INVISIBLE);
 
-        if (null == s) {
-            showErrorMessage();
-        } else {
-            mSearchResultsTextView.setText(s);
+        if (null != s && !s.equals("")) {
             showJsonDataView();
+            mSearchResultsTextView.setText(s);
+        } else {
+            showErrorMessage();
         }
     }
 
